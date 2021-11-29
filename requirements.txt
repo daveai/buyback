@@ -1,0 +1,8 @@
+Brownie==0.5.1
+eth_brownie==1.16.4
+eth_utils==1.10.0
+pandas==1.2.3
+pyperclip==1.8.2
+requests==2.26.0
+tqdm==4.62.3
+web3==5.23.1
