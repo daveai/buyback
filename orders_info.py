@@ -87,7 +87,8 @@ dxd_withdrawls = be.events.Withdraw.createFilter(
         "user": gp_relay.address,
         "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
     },
-).get_all_entries()
+)
+dxd_withdrawls = dxd_withdrawls.get_all_entries()
 dxd_withdrawn = Wei(sum([i["args"]["amount"] for i in dxd_withdrawls]))
 dxd_balance = Wei(
     be.functions.getBalance(
