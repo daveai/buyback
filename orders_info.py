@@ -7,20 +7,6 @@ from datetime import datetime
 from brownie import Wei
 from tqdm import tqdm
 
-# Connect to xDai archive node
-print("Connecting to xDai archive node...")
-w3 = Web3(Web3.HTTPProvider("https://xdai-archive.blockscout.com/"))
-print("Done.\n")
-
-# Setup GP relayer contract and the Batch Exchange contract (GPv1)
-gp_relay = w3.eth.contract(
-    address="0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46", abi=gp_abi
-)
-be = w3.eth.contract(address="0x25B06305CC4ec6AfCF3E7c0b673da1EF8ae26313", abi=be_abi)
-
-# Pull all orders placed by GP relayer
-orders = gp_relay.events.PlacedTrade.createFilter(fromBlock=0)
-orders = orders.get_all_entries()
 
 # Get and save latest ETH prices in a dictionary
 print("Pulling latest ETH price data...")
@@ -34,6 +20,21 @@ prices = dict(prices)
 print("Done.\n")
 
 data = []
+
+# Connect to xDai archive node
+print("Connecting to xDai archive node...")
+w3 = Web3(Web3.HTTPProvider("https://xdai-archive.blockscout.com/"))
+print("Done.\n")
+
+# Setup GP relayer contract and the Batch Exchange contract (GPv1)
+gp_relay = w3.eth.contract(
+    address="0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46", abi=gp_abi
+)
+be = w3.eth.contract(address="0x25B06305CC4ec6AfCF3E7c0b673da1EF8ae26313", abi=be_abi)
+
+# Pull all orders placed by GP relayer
+orders = gp_relay.events.PlacedTrade.getLogs(fromBlock="earliest")
+
 
 print("Retrieving order data on-chain...")
 for order in tqdm(orders):
@@ -81,14 +82,14 @@ df.to_csv("order_data.csv", index=False)
 
 # Calculate actual amount of DXD bought. Sum of withdrawls + balance in be.
 print("\nCalculating total amount of DXD bought...")
-dxd_withdrawls = be.events.Withdraw.createFilter(
-    fromBlock=0,
-    argument_filters={
-        "user": gp_relay.address,
-        "token": "0xb90D6bec20993Be5d72A5ab353343f7a0281f158",
-    },
-)
-dxd_withdrawls = dxd_withdrawls.get_all_entries()
+dxd_withdrawls = be.events.Withdraw.getLogs(fromBlock="earliest")
+
+dxd_withdrawls = [
+    i
+    for i in dxd_withdrawls
+    if i["args"]["user"] == "0xA369a0b81ee984a470EA0acf41EF9DdcDB5f7B46"
+    and i["args"]["token"] == "0xb90D6bec20993Be5d72A5ab353343f7a0281f158"
+]
 dxd_withdrawn = Wei(sum([i["args"]["amount"] for i in dxd_withdrawls]))
 dxd_balance = Wei(
     be.functions.getBalance(
