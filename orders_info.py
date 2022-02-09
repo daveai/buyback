@@ -23,7 +23,7 @@ data = []
 
 # Connect to xDai archive node
 print("Connecting to xDai archive node...")
-w3 = Web3(Web3.HTTPProvider("https://xdai-archive.blockscout.com/"))
+w3 = Web3(Web3.HTTPProvider("https://poa-xdai-archival.gateway.pokt.network/v1/lb/61dd9c58c741ae003bf49bfb"))
 print("Done.\n")
 
 # Setup GP relayer contract and the Batch Exchange contract (GPv1)
@@ -33,7 +33,7 @@ gp_relay = w3.eth.contract(
 be = w3.eth.contract(address="0x25B06305CC4ec6AfCF3E7c0b673da1EF8ae26313", abi=be_abi)
 
 # Pull all orders placed by GP relayer
-orders = gp_relay.events.PlacedTrade.getLogs(fromBlock="earliest")
+orders = gp_relay.events.PlacedTrade.getLogs(fromBlock=0)
 
 
 print("Retrieving order data on-chain...")
@@ -82,7 +82,7 @@ df.to_csv("order_data.csv", index=False)
 
 # Calculate actual amount of DXD bought. Sum of withdrawls + balance in be.
 print("\nCalculating total amount of DXD bought...")
-dxd_withdrawls = be.events.Withdraw.getLogs(fromBlock="earliest")
+dxd_withdrawls = be.events.Withdraw.getLogs(fromBlock=0)
 
 dxd_withdrawls = [
     i
