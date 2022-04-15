@@ -26,8 +26,8 @@ eth_price = requests.get(
 ).json()["ethereum"]["usd"]
 # AVG trading volume over 90 days. Assuming 20% is on-chain trade, and take 25% of that value.
 # volume = requests.get("https://api.coingecko.com/api/v3/coins/dxdao/market_chart?vs_currency=usd&days=90&interval=daily")
-volume = 141122  # mean([i[1] for i in volume.json()['total_volumes']])*.2
-volume_link = "https://gateway.pinata.cloud/ipfs/QmS4XFgwiWrPZZriT6tsVDu9JH5533D7LPKWc7kqjbwdJe?preview=1"
+volume = 134145  # mean([i[1] for i in volume.json()['total_volumes']])*.2
+volume_link = "https://gateway.pinata.cloud/ipfs/QmUHG87DjQBcnGUuNhVP9a2nagEYr3b4A4BwqTcjgM4W7u"
 usd_bb = volume * 0.25
 eth_bb = round(usd_bb / eth_price, 2)
 

@@ -23,7 +23,7 @@ data = []
 
 # Connect to xDai archive node
 print("Connecting to xDai archive node...")
-w3 = Web3(Web3.HTTPProvider("https://poa-xdai-archival.gateway.pokt.network/v1/lb/61dd9c58c741ae003bf49bfb"))
+w3 = Web3(Web3.HTTPProvider("https://xdai-archive.blockscout.com/"))
 print("Done.\n")
 
 # Setup GP relayer contract and the Batch Exchange contract (GPv1)
