@@ -26,8 +26,8 @@ eth_price = requests.get(
 ).json()["ethereum"]["usd"]
 # AVG trading volume over 90 days. Assuming 20% is on-chain trade, and take 25% of that value.
 # volume = requests.get("https://api.coingecko.com/api/v3/coins/dxdao/market_chart?vs_currency=usd&days=90&interval=daily")
-volume = 134145  # mean([i[1] for i in volume.json()['total_volumes']])*.2
-volume_link = "https://gateway.pinata.cloud/ipfs/QmUHG87DjQBcnGUuNhVP9a2nagEYr3b4A4BwqTcjgM4W7u"
+volume = 54620  # mean([i[1] for i in volume.json()['total_volumes']])*.2
+volume_link = "https://dxgov.mypinata.cloud/ipfs/Qmc7VT7hxVfHUibLzKrdBHd1FLay2rPa3xdTLuGjag83wD"
 usd_bb = volume * 0.25
 eth_bb = round(usd_bb / eth_price, 2)
 
@@ -36,7 +36,7 @@ proposal = f"""{token} Buyback Order #{bb_num} for {eth_bb} {eth}
 
 This proposal places a {eth}/{token} order on Gnosis Protocol v1 on {net}, using the [GP Relayer]({relayer}). This proposal uses funds in the GP Relayer. [According to the most recent on-chain data and estimates]({volume_link}), DXD has averaged ${int(volume/1000)}k over the last 3 months. This proposal places an order for {eth_bb} {eth} using a [${eth_price} ETH/USD price from Coingecko](https://www.coingecko.com/en/coins/ethereum) in line with the DXD Buyback Program proposal, which was originally passed on [Mainnet](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x40dd1973f7434d192946695919deb58176a192db0c37c8b9316202e006a88ba8) and [xDai](https://alchemy.daostack.io/dao/0xe716ec63c5673b3a4732d22909b38d779fa47c3f/proposal/0xc122e9ea5460917347538157501f7999d82bdd9b1b8d85bee373391c4b87aa45), and extended for another $1m to $3m total, through a further proposal which also passed on [Mainnet](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x134c17975ee0e486cdf4719c647c93f94b3bc991b9155193215807521cfce20d) and [xDai](https://alchemy.daostack.io/dao/0xe716ec63c5673b3a4732d22909b38d779fa47c3f/proposal/0x56c66f99d87a48d707475aa2466f0a58da13bd744475410957d6572b439cc5bf). The extension on the buyback program was discussed on [DAOtalk here](https://daotalk.org/t/extend-dxd-buyback-program-for-another-1m-draft-proposal/3319). 
 
-This proposal would place a limit order on the Gnosis Protocol at a price that is {premium}% above the time-weighted average price of {token}/{eth} on Swapr when the proposal is executed and the [Oracle contract is called]({oracle}). The {premium}% slippage tolerance is under the parameters approved in the [DXD Buyback Program Parameters Update #1](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x58396cc329f5c33bfa29a2e264a05adcad53567a9dcf3e601392d65779dad153) proposal that passed on [mainnet](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x58396cc329f5c33bfa29a2e264a05adcad53567a9dcf3e601392d65779dad153) and [xDai](https://alchemy.daostack.io/dao/0xe716ec63c5673b3a4732d22909b38d779fa47c3f/proposal/0xd6c4bfd03d87c365432c073ff0f36578c3cba9da080b75de5058357319908039). The order requires 50 {eth} in the Swapr {token}/{eth} pool when the oracle checks and has a minimum amount of DXD accepted of 35 DXD. The order is live until {datetime.fromtimestamp(deadline).strftime("%a %b %d %Y %X GMT")}.
+This proposal would place a limit order on the Gnosis Protocol at a price that is {premium}% above the time-weighted average price of {token}/{eth} on Swapr when the proposal is executed and the [Oracle contract is called]({oracle}). The {premium}% slippage tolerance is under the parameters approved in the [DXD Buyback Program Parameters Update #1](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x58396cc329f5c33bfa29a2e264a05adcad53567a9dcf3e601392d65779dad153) proposal that passed on [mainnet](https://alchemy.daostack.io/dao/0x519b70055af55a007110b4ff99b0ea33071c720a/proposal/0x58396cc329f5c33bfa29a2e264a05adcad53567a9dcf3e601392d65779dad153) and [xDai](https://alchemy.daostack.io/dao/0xe716ec63c5673b3a4732d22909b38d779fa47c3f/proposal/0xd6c4bfd03d87c365432c073ff0f36578c3cba9da080b75de5058357319908039). The order requires 10 {eth} in the Swapr {token}/{eth} pool when the oracle checks and has a minimum amount of DXD accepted of 25 DXD. The order is live until {datetime.fromtimestamp(deadline).strftime("%a %b %d %Y %X GMT")}.
 
 Further explanation of the [GP relayer can be found here](https://ipfs.io/ipfs/QmdGAjyrpjobow8Hv3fCPoLd5LYRYZPB9qnAWSaRc5krNP). 
 
@@ -49,7 +49,7 @@ params = f"""
 TokenIn: {tokenIn}
 TokenOut: {tokenOut}
 TokenInAmount: {int(eth_bb*10**18)}
-MinTokenOutAmount: 35000000000000000000
+MinTokenOutAmount: 25000000000000000000
 PriceTolerance: {premium*10000}
 MinReserve: 10000000000000000000
 Startdate: {startdate}
@@ -67,7 +67,7 @@ call_data = contract.encodeABI(
         tokenIn,
         tokenOut,
         int(eth_bb * 10 ** 18),
-        35000000000000000000,
+        25000000000000000000,
         premium * 10000,
         10000000000000000000,
         startdate,
